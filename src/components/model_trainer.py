@@ -12,12 +12,16 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
-from xgboost import XGBRegressor
 
 from src.exception import CustomException
 from src.logger import logging
 
 from src.utils import save_object,evaluate_models
+
+try:
+    from xgboost import XGBRegressor
+except Exception:
+    XGBRegressor = None
 
 @dataclass
 class ModelTrainerConfig:
@@ -42,10 +46,11 @@ class ModelTrainer:
                 "Decision Tree": DecisionTreeRegressor(),
                 "Gradient Boosting": GradientBoostingRegressor(),
                 "Linear Regression": LinearRegression(),
-                "XGBRegressor": XGBRegressor(),
                 "CatBoosting Regressor": CatBoostRegressor(verbose=False),
                 "AdaBoost Regressor": AdaBoostRegressor(),
             }
+            if XGBRegressor is not None:
+                models["XGBRegressor"] = XGBRegressor()
             params={
                 "Decision Tree": {
                     'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
@@ -67,10 +72,6 @@ class ModelTrainer:
                     'n_estimators': [8,16,32,64,128,256]
                 },
                 "Linear Regression":{},
-                "XGBRegressor":{
-                    'learning_rate':[.1,.01,.05,.001],
-                    'n_estimators': [8,16,32,64,128,256]
-                },
                 "CatBoosting Regressor":{
                     'depth': [6,8,10],
                     'learning_rate': [0.01, 0.05, 0.1],
@@ -83,6 +84,11 @@ class ModelTrainer:
                 }
                 
             }
+            if XGBRegressor is not None:
+                params["XGBRegressor"] = {
+                    'learning_rate':[.1,.01,.05,.001],
+                    'n_estimators': [8,16,32,64,128,256]
+                }
 
             model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,
                                              models=models,param=params)

@@ -1,10 +1,13 @@
-pandas
-numpy
-seaborn
-matplotlib
-scikit-learn
-catboost
-xgboost
-dill
-# sys
+flask==3.1.3
+pandas==3.0.0
+numpy==2.4.2
+seaborn==0.13.2
+matplotlib==3.10.8
+scikit-learn==1.5.2
+scipy==1.17.0
+joblib==1.5.3
+catboost==1.2.8
+xgboost==3.1.3
+dill==0.4.0
+-e .
 # -e .  ---> to automatically trigger setup.py whenever a something is addes to requirements
